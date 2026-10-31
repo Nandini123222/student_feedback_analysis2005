@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Student Feedback Analysis System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+    <div class="nav-inner">
+        <span class="brand">&#127979; Feedback System</span>
+        <ul>
+            <li><a href="{{ url_for('index') }}"
+                   class="{{ 'active' if request.endpoint == 'index' else '' }}">Submit Feedback</a></li>
+            <li><a href="{{ url_for('dashboard') }}"
+                   class="{{ 'active' if request.endpoint == 'dashboard' else '' }}">Dashboard</a></li>
+            <li><a href="{{ url_for('reports') }}"
+                   class="{{ 'active' if request.endpoint == 'reports' else '' }}">Reports</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Page content -->
+{% block content %}{% endblock %}
+
+<!-- Footer -->
+<footer>
+    <p>Student Feedback Analysis System &mdash; Anonymous &amp; Secure &mdash; No personal data collected.</p>
+</footer>
+
+</body>
+</html>

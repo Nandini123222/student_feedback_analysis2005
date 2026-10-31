@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Reports – Student Feedback Analysis System{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="page-header">
+    <h1>Aggregated Feedback Reports</h1>
+    <p>Course × Question breakdown. Groups with fewer than {{ min_responses }} responses are excluded for privacy.</p>
+</div>
+
+<div class="container" style="padding-top: 28px; padding-bottom: 40px;">
+
+    <!-- Export Button -->
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="{{ url_for('export_csv') }}" class="btn-success">
+            &#11123; Export as CSV
+        </a>
+    </div>
+
+    <!-- Privacy notice -->
+    <div class="notice">
+        <strong>&#128274; Privacy:</strong>
+        Only aggregated statistics (averages and counts) are displayed. Individual comments are
+        never shown. Groups with fewer than <strong>{{ min_responses }} responses</strong> are hidden.
+    </div>
+
+    {% if report_data %}
+    <!-- Report Table -->
+    <div class="card">
+        <h2>&#128202; Aggregated Feedback Report</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Course</th>
+                        <th>Question</th>
+                        <th>Avg Rating</th>
+                        <th>Responses</th>
+                        <th style="min-width:120px;">Score Visual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in report_data %}
+                    <tr>
+                        <td style="color:#bbb;">{{ loop.index }}</td>
+                        <td><strong>{{ row.course_name }}</strong></td>
+                        <td style="font-size:13px; color:#555;">{{ row.question_text }}</td>
+                        <td>
+                            <span style="font-size:16px; font-weight:700;
+                                color: {% if row.avg_rating >= 4.0 %}#5CB85C
+                                       {% elif row.avg_rating >= 3.0 %}#f0ad4e
+                                       {% else %}#e74c3c{% endif %};">
+                                {{ row.avg_rating }}
+                            </span> / 5
+                        </td>
+                        <td>{{ row.response_count }}</td>
+                        <td>
+                            <div class="rating-bar-container">
+                                <div class="rating-bar-bg">
+                                    <div class="rating-bar-fill"
+                                         style="width: {{ (row.avg_rating / 5 * 100) | round(1) }}%;
+                                                background: {% if row.avg_rating >= 4.0 %}#5CB85C
+                                                            {% elif row.avg_rating >= 3.0 %}#f0ad4e
+                                                            {% else %}#e74c3c{% endif %};">
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p style="font-size:12px; color:#aaa; margin-top:14px;">
+            Showing {{ report_data | length }} record(s).
+        </p>
+    </div>
+
+    <!-- Legend -->
+    <div class="card" style="padding: 18px 28px;">
+        <h2>Legend</h2>
+        <div style="display:flex; gap:30px; flex-wrap:wrap; font-size:14px; margin-top:8px;">
+            <span><span style="color:#5CB85C; font-weight:700;">&#9632;</span> 4.0 – 5.0 &nbsp;Excellent</span>
+            <span><span style="color:#f0ad4e; font-weight:700;">&#9632;</span> 3.0 – 3.9 &nbsp;Average</span>
+            <span><span style="color:#e74c3c; font-weight:700;">&#9632;</span> 1.0 – 2.9 &nbsp;Needs Improvement</span>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="notice">
+        No report data available yet. This could mean:
+        <ul style="margin-top:8px; margin-left:20px;">
+            <li>No feedback has been submitted yet, or</li>
+            <li>No course-question combination has at least <strong>{{ min_responses }}</strong> responses.</li>
+        </ul>
+        <br>
+        Go to <a href="{{ url_for('index') }}">Submit Feedback</a> to add responses.
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
